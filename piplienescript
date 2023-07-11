@@ -1,0 +1,36 @@
+pipeline {
+    agent { label "agent_a" }
+
+    stages {
+        stage('Clone projectA') {
+            steps {
+                echo 'cloning project'
+                git branch: 'main', url: 'https://github.com/Poojainamati/project_maven.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Build projectA'
+                sh 'yum install maven -y'
+                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploy projectA'
+                deploy adapters: [tomcat8(credentialsId: 'admin', path: '', url: 'http://18.183.217.209:8080/')], contextPath: null, war: '**/*.war'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Test projectA'
+            }
+        }
+        stage('Production') {
+            steps {
+                echo 'Production projectA'
+            }
+        }
+    }
+}
